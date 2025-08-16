@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>기억의 거리: 광화문</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & Phosphor Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .app-page { display: none; }
+        .app-page.active { display: flex; }
+
+        .era-card, .archive-card, .tour-card {
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        }
+        .era-card.active, .archive-card.active, .tour-card.active { opacity: 1; visibility: visible; }
+        .progress-bar-segment { background-color: rgba(255, 255, 255, 0.4); transition: background-color 0.3s ease; }
+        .progress-bar-segment.active { background-color: rgba(255, 255, 255, 1); }
+        
+        .action-btn, .tab-btn { transition: transform 0.1s ease-in-out; }
+        .action-btn:active, .tab-btn:active { transform: scale(0.9); }
+
+        .like-btn .heart-filled { display: none; }
+        .like-btn.liked .heart-filled { display: block; color: #ef4444; }
+        .like-btn.liked .heart-outline { display: none; }
+
+        .tab-btn.active { color: #2563eb; /* blue-600 */ }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4" style="background: linear-gradient(135deg, #483D8B, #8A2BE2);">
+
+    <!-- iPhone 14 Pro Frame -->
+    <div class="relative mx-auto bg-gray-200 border-4 border-black rounded-[2.5rem] h-[860px] w-[430px] shadow-xl p-2">
+        <div class="h-[32px] w-[3px] bg-gray-300 border border-black absolute -left-[6px] top-[90px] rounded-l-lg"></div>
+        <div class="h-[46px] w-[3px] bg-gray-300 border border-black absolute -left-[6px] top-[134px] rounded-l-lg"></div>
+        <div class="h-[46px] w-[3px] bg-gray-300 border border-black absolute -left-[6px] top-[188px] rounded-l-lg"></div>
+        <div class="h-[64px] w-[3px] bg-gray-300 border border-black absolute -right-[6px] top-[142px] rounded-r-lg"></div>
+        
+        <!-- Screen Content -->
+        <div class="rounded-[2rem] overflow-hidden w-full h-full bg-white flex flex-col border border-black">
+            
+            <!-- Main Content Area -->
+            <main class="flex-grow overflow-hidden relative">
+                
+                <!-- Page: Home -->
+                <div id="page-home" class="app-page active w-full h-full flex-col bg-white">
+                    <div class="w-full h-full flex flex-col justify-between items-center py-10">
+                        <div class="w-full flex-grow flex items-center justify-center">
+                           <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/로고3.PNG" alt="기억의 거리 로고" class="w-full px-4">
+                        </div>
+                        <div class="w-full px-10">
+                            <p class="text-center text-gray-500 text-sm mb-3">현재위치: 광화문</p>
+                            <button class="bg-gray-800 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center gap-2 w-full justify-center mb-4">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                                광화문 기억 탐색하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Past -->
+                <div id="page-past" class="app-page w-full h-full flex-col">
+                    <header class="p-4 border-b border-gray-200 flex-shrink-0 z-30 bg-white"><h1 class="text-xl font-bold text-gray-900 text-center">과거의 모습</h1></header>
+                    <div class="relative flex-grow h-full">
+                        <div class="absolute top-0 left-0 right-0 p-3 z-20"><div id="progress-bar" class="flex items-center space-x-1"></div></div>
+                        <div id="eras-container" class="relative w-full h-full bg-black">
+                             <div id="era-0" class="era-card"><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/joseon-gwanghwamun.jpg" class="absolute inset-0 w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div><div class="absolute bottom-0 p-6 text-white"><h2 class="text-3xl font-bold">1. 조선 시대</h2><p class="mt-2 opacity-90 text-sm leading-relaxed">광화문(光化門)은 경복궁의 정문으로, '왕의 큰 덕이 온 나라를 비춘다'는 의미를 담고 있습니다. 1395년 처음 세워졌으며, 조선의 법궁을 드나드는 가장 중요한 관문이자 왕실의 권위를 상징하는 건축물이었습니다. 수많은 역사적 사건의 배경이 되었으며, 백성들에게는 왕조의 상징과도 같은 존재였습니다.</p></div></div>
+                             <div id="era-1" class="era-card"><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/japanese-era-street.jpg" class="absolute inset-0 w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div><div class="absolute bottom-0 p-6 text-white"><h2 class="text-3xl font-bold">2. 격동의 시대</h2><p class="mt-2 opacity-90 text-sm leading-relaxed">일제강점기, 조선총독부 건물을 짓기 위해 광화문은 원래 위치에서 강제 이전되는 수모를 겪었습니다. 이후 한국전쟁을 거치며 포격으로 인해 문루가 완전히 소실되는 등, 우리 민족의 아픔과 함께 지울 수 없는 큰 상처를 입었습니다.</p></div></div>
+                             <div id="era-2" class="era-card"><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/seoul-modernization.jpg" class="absolute inset-0 w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div><div class="absolute bottom-0 p-6 text-white"><h2 class="text-3xl font-bold">3. 재건의 시대</h2><p class="mt-2 opacity-90 text-sm leading-relaxed">전쟁의 폐허 속에서 국가를 재건하려는 의지의 상징으로, 1968년 광화문은 철근 콘크리트 구조로 복원되었습니다. 비록 원래의 모습과 재료는 아니었지만, 이 모습의 광화문은 수십 년간 서울의 중심을 지키며 경제 발전의 시기를 함께했습니다.</p></div></div>
+                        </div>
+                        <div class="absolute top-0 left-0 h-full w-1/3 z-10" id="prev-era-btn"></div>
+                        <div class="absolute top-0 right-0 h-full w-1/3 z-10" id="next-era-btn"></div>
+                    </div>
+                </div>
+
+                <!-- Page: Tour (Container for Cards) -->
+                <div id="page-tour" class="app-page w-full h-full">
+                    <div id="tour-container" class="relative w-full h-full">
+                        <!-- Tour Card 0: List -->
+                        <div id="tour-card-0" class="tour-card w-full h-full flex-col bg-gray-50">
+                            <header class="p-4 border-b border-gray-200 bg-white"><h1 class="text-xl font-bold text-gray-900 text-center">스토리텔링 투어</h1></header>
+                            <div class="p-4 space-y-4 overflow-y-auto">
+                                <div class="relative"><input type="text" placeholder="투어 검색..." class="w-full p-2 pl-8 border rounded-lg"><i class="ph ph-magnifying-glass absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"></i></div>
+                                <h2 class="font-bold text-lg">추천 투어</h2>
+                                <div class="bg-white p-4 rounded-lg shadow-sm border space-y-2">
+                                    <h3 class="font-bold">독립운동가의 길</h3>
+                                    <p class="text-sm text-gray-600">서대문형무소부터 독립문까지, 열사들의 발자취를 따라가다.</p>
+                                    <div class="flex items-center justify-between text-xs text-gray-500 pt-2">
+                                        <div class="flex items-center gap-4"><span class="flex items-center gap-1"><i class="ph-fill ph-map-pin"></i>3.5km</span><span class="flex items-center gap-1"><i class="ph-fill ph-clock"></i>2시간 소요</span></div>
+                                        <button id="start-tour-1" class="bg-blue-500 text-white px-3 py-1 rounded-md">시작하기</button>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm border space-y-2">
+                                    <h3 class="font-bold">한양도성 옛길 탐방</h3>
+                                    <p class="text-sm text-gray-600">600년 역사의 흔적을 따라 걷는 서울의 숨겨진 이야기.</p>
+                                    <div class="flex items-center justify-between text-xs text-gray-500 pt-2">
+                                        <div class="flex items-center gap-4"><span class="flex items-center gap-1"><i class="ph-fill ph-map-pin"></i>5.2km</span><span class="flex items-center gap-1"><i class="ph-fill ph-clock"></i>3시간 소요</span></div>
+                                        <button class="bg-blue-500 text-white px-3 py-1 rounded-md">시작하기</button>
+                                    </div>
+                                </div>
+                                <h2 class="font-bold text-lg pt-2">지도에서 보기</h2>
+                                <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/광화문 지도.jpg" class="w-full rounded-lg border">
+                            </div>
+                        </div>
+                        <!-- Tour Card 1: Detail -->
+                        <div id="tour-card-1" class="tour-card w-full h-full flex-col bg-gray-50">
+                            <header class="p-4 border-b border-gray-200 bg-white flex items-center relative">
+                                <button id="back-to-tour-list-btn" class="absolute left-4"><i class="ph ph-arrow-left text-2xl"></i></button>
+                                <h1 class="text-xl font-bold text-gray-900 text-center flex-grow">독립운동가의 길</h1>
+                            </header>
+                            <div class="overflow-y-auto">
+                                <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/naver_map_축소.PNG" class="w-full h-64 object-contain">
+                                <div class="p-4 space-y-4">
+                                    <p class="text-sm text-gray-700 leading-relaxed">서대문형무소에서 독립문으로 이어지는 이 길은 우리 역사의 아픔과 독립을 향한 굳건한 의지를 느낄 수 있는 의미 있는 길입니다.</p>
+                                    <div>
+                                        <h3 class="font-bold text-lg mb-2">추천 코스</h3>
+                                        <div class="space-y-3">
+                                            <div>
+                                                <h4 class="font-semibold">1. 서대문형무소 역사관</h4>
+                                                <p class="text-sm text-gray-600 mt-1">우리 민족의 아픈 역사를 간직한 곳으로, 독립운동가들이 겪었던 고난을 생생하게 느낄 수 있습니다. 붉은 벽돌 건물과 옥사, 고문실 등을 둘러보며 그들의 숭고한 희생을 기려보세요.</p>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold">2. 독립문</h4>
+                                                <p class="text-sm text-gray-600 mt-1">역사관을 나와 독립공원을 지나면 마주하게 됩니다. 우리나라의 영원한 독립을 선언하기 위해 세워진 문으로, 자주독립의 정신을 상징합니다.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div>
+                                        <h3 class="font-bold text-lg mb-2">코스 정보</h3>
+                                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                            <li><span class="font-semibold">소요 시간:</span> 약 2시간</li>
+                                            <li><span class="font-semibold">주요 지점:</span> 독립문역 → 독립문 → 서대문형무소 역사관</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Record -->
+                <div id="page-record" class="app-page w-full h-full flex-col bg-gray-50">
+                    <header class="p-4 border-b border-gray-200 bg-white"><h1 class="text-xl font-bold text-gray-900 text-center">기억 기록하기</h1></header>
+                    <div class="p-4 space-y-4 overflow-y-auto">
+                        <div><h3 class="font-bold text-lg">1. 추억 선택</h3><div class="mt-2 h-40 bg-gray-200 rounded-lg flex items-center justify-center border-2 border-dashed"><button class="bg-white px-4 py-2 rounded-md shadow-sm border font-semibold">사진/영상 선택</button></div></div>
+                        <div><h3 class="font-bold text-lg">2. 위치 정보</h3><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/광화문 지도.jpg" class="w-full rounded-lg border mt-2"><input type="text" placeholder="현재 위치 또는 장소 검색" class="w-full p-2 mt-2 border rounded-lg"></div>
+                        <div><h3 class="font-bold text-lg">3. 이야기 작성</h3><textarea placeholder="이 추억에 대한 이야기를 들려주세요..." rows="4" class="w-full p-2 mt-2 border rounded-lg"></textarea></div>
+                    </div>
+                    <div class="p-4 mt-auto"><button class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">기억 기록 완료</button></div>
+                </div>
+
+                <!-- Page: Archive -->
+                <div id="page-archive" class="app-page w-full h-full flex-col bg-gray-50">
+                     <header class="p-4 border-b border-gray-200 flex-shrink-0 z-30 bg-white"><h1 class="text-xl font-bold text-gray-900 text-center">기억 아카이브</h1></header>
+                    <div class="relative flex-grow h-full">
+                        <div class="absolute top-0 left-0 right-0 p-3 z-20"><div id="archive-progress-bar" class="flex items-center space-x-1"></div></div>
+                        <div id="archive-container" class="relative w-full h-full">
+                            <div id="archive-card-0" class="archive-card active w-full h-full flex-col">
+                                <div class="p-4 overflow-y-auto">
+                                    <div class="relative"><input type="text" placeholder="기억 검색 (장소, 키워드, 사용자)..." class="w-full p-2 pl-8 border rounded-lg bg-white"><i class="ph ph-magnifying-glass absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"></i></div>
+                                    <div class="grid grid-cols-2 gap-4 mt-4">
+                                        <div id="archive-item-0" class="cursor-pointer">
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/worldcup-2002-aerial.jpg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">2002년의 함성</h4>
+                                            <p class="text-xs text-gray-500">by 강하문</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">128</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/우리아빠졸업식.jpg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">우리 아빠의 졸업식</h4>
+                                            <p class="text-xs text-gray-500">by 김기억</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">110</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/사라진골목길.jpg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">사라진 골목길</h4>
+                                            <p class="text-xs text-gray-500">by 박추억</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">98</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/첫데이트장소.jpg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">첫 데이트 장소</h4>
+                                            <p class="text-xs text-gray-500">by 이설렘</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">78</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/교보문고.jpg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">광화문 교보문고</h4>
+                                            <p class="text-xs text-gray-500">by 책벌레</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">72</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/세종대왕.jpeg" class="w-full h-32 object-cover rounded-lg">
+                                            <h4 class="font-bold mt-2 text-sm">세종대왕 동상 앞에서</h4>
+                                            <p class="text-xs text-gray-500">by 나들이</p>
+                                            <div class="flex items-center mt-1 text-xs text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                                <span class="ml-1 font-semibold">68</span>
+                                            </div>
+                                        </div>
+                                        <div><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/좌측최하단.jpg" class="w-full h-32 object-cover rounded-lg"><h4 class="font-bold mt-2 text-sm">첫눈 오던 날</h4><p class="text-xs text-gray-500">by 겨울아이</p></div>
+                                        <div><img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/우측최하단.jpg" class="w-full h-32 object-cover rounded-lg"><h4 class="font-bold mt-2 text-sm">야경 맛집</h4><p class="text-xs text-gray-500">by 사진작가</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="archive-card-1" class="archive-card w-full h-full flex-col bg-white">
+                                <header class="p-4 border-b border-gray-200 bg-white flex items-center relative">
+                                    <button id="back-to-archive-list-btn" class="absolute left-4"><i class="ph ph-arrow-left text-2xl"></i></button>
+                                    <div class="flex-grow flex items-center justify-center">
+                                        <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/강하문.png" alt="user avatar" class="w-9 h-9 rounded-full object-cover">
+                                        <div class="ml-3 text-center"><span class="text-sm font-bold text-gray-800">강하문</span><p class="text-xs text-gray-500 -mt-1">기억 아카이브</p></div>
+                                    </div>
+                                </header>
+                                <div class="overflow-y-auto">
+                                    <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/worldcup-2002-new.jpg" class="w-full object-cover">
+                                    <div class="p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-4">
+                                                <button class="action-btn like-btn"><svg class="w-7 h-7 heart-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg><svg class="w-7 h-7 heart-filled" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg></button>
+                                                <button class="action-btn"><i class="ph ph-chat-circle-dots text-2xl"></i></button>
+                                                <button class="action-btn"><i class="ph ph-paper-plane-tilt text-2xl"></i></button>
+                                            </div>
+                                            <button class="action-btn"><i class="ph ph-bookmark-simple text-2xl"></i></button>
+                                        </div>
+                                        <p class="text-sm font-bold mt-2"><span class="like-count">128</span>명이 좋아합니다</p>
+                                        <p class="text-gray-800 text-sm mt-2"><span class="font-bold">강하문</span> 2002년 여름, 광화문 앞은 거대한 붉은 물결로 뒤덮였습니다. 온 국민이 하나 되어 "대~한민국!"을 외치던 함성은 광화문이 단순한 문화재를 넘어, 우리 모두의 기쁨과 환희가 모이는 살아있는 광장임을 증명했습니다.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-0 left-0 h-full w-1/3 z-10" id="prev-archive-btn"></div>
+                        <div class="absolute top-0 right-0 h-full w-1/3 z-10" id="next-archive-btn"></div>
+                    </div>
+                </div>
+
+                <!-- Page: MY -->
+                <div id="page-my" class="app-page w-full h-full flex-col bg-white">
+                    <header class="p-4 border-b border-gray-200 flex-shrink-0">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-xl font-bold text-gray-800">강하문</h1>
+                            <div class="flex items-center space-x-4"><i class="ph ph-plus-square text-2xl"></i><i class="ph ph-list text-2xl"></i></div>
+                        </div>
+                    </header>
+                    <div class="overflow-y-auto">
+                        <div class="p-4">
+                            <div class="flex items-center">
+                                <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/강하문.png" class="w-20 h-20 rounded-full object-cover">
+                                <div class="flex-grow flex justify-around items-center ml-4">
+                                    <div class="text-center"><p class="font-bold text-lg">84</p><p class="text-sm text-gray-500">posts</p></div>
+                                    <div class="text-center"><p class="font-bold text-lg">1,134</p><p class="text-sm text-gray-500">followers</p></div>
+                                    <div class="text-center"><p class="font-bold text-lg">513</p><p class="text-sm text-gray-500">following</p></div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-bold">강하문</p>
+                                <p class="text-sm text-gray-600">기억 탐험가 | 서울</p>
+                            </div>
+                            <div class="flex items-center space-x-2 mt-4">
+                                <button class="flex-1 bg-gray-200 font-semibold py-2 rounded-lg text-sm">프로필 편집</button>
+                                <button class="flex-1 bg-gray-200 font-semibold py-2 rounded-lg text-sm">프로필 공유</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 flex justify-around p-2">
+                            <i class="ph-fill ph-squares-four text-2xl"></i>
+                            <i class="ph ph-heart text-2xl text-gray-400"></i>
+                            <i class="ph ph-play-circle text-2xl text-gray-400"></i>
+                            <i class="ph ph-user-square text-2xl text-gray-400"></i>
+                        </div>
+                        <div class="grid grid-cols-3 gap-0.5">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/worldcup-2002-aerial.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/2전쟁기념관.png" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/3현충원.png" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/4한옥길.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/5창경궁.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/6명동.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/7북촌.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/8청계천.jpg" class="w-full h-32 object-cover">
+                            <img src="https://matthew-srtc.github.io/gwanghwamun-memory/images/9롯데타워.jpg" class="w-full h-32 object-cover">
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+            
+            <!-- Bottom Tab Bar -->
+            <footer class="p-3 border-t border-gray-200 bg-white/80 backdrop-blur-sm flex-shrink-0 z-30">
+                <div class="flex items-center justify-around">
+                    <button data-page="home" class="tab-btn active flex flex-col items-center gap-1 text-xs"><i class="ph-fill ph-house text-2xl"></i>홈</button>
+                    <button data-page="past" class="tab-btn flex flex-col items-center gap-1 text-xs text-gray-500"><i class="ph-fill ph-clock-counter-clockwise text-2xl"></i>과거</button>
+                    <button data-page="tour" class="tab-btn flex flex-col items-center gap-1 text-xs text-gray-500"><i class="ph-fill ph-map-trifold text-2xl"></i>투어</button>
+                    <button data-page="record" class="tab-btn flex flex-col items-center gap-1 text-xs text-gray-500"><i class="ph-fill ph-plus-circle text-2xl"></i>기록</button>
+                    <button data-page="archive" class="tab-btn flex flex-col items-center gap-1 text-xs text-gray-500"><i class="ph-fill ph-archive text-2xl"></i>아카이브</button>
+                    <button data-page="my" class="tab-btn flex flex-col items-center gap-1 text-xs text-gray-500"><i class="ph-fill ph-user-circle text-2xl"></i>MY</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Page navigation
+            const pages = document.querySelectorAll('.app-page');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            function switchPage(pageId) {
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                }
+
+                tabBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.page === pageId);
+                    btn.classList.toggle('text-gray-500', btn.dataset.page !== pageId);
+                });
+            }
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchPage(btn.dataset.page));
+            });
+
+            // 'Past' page story navigation
+            const eraCards = document.querySelectorAll('.era-card');
+            const prevEraBtn = document.getElementById('prev-era-btn');
+            const nextEraBtn = document.getElementById('next-era-btn');
+            const progressBar = document.getElementById('progress-bar');
+            let currentEra = 0;
+            const totalEras = 3; 
+
+            for (let i = 0; i < totalEras; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-bar-segment h-1 rounded-full flex-1';
+                progressBar.appendChild(segment);
+            }
+            const progressSegments = progressBar.querySelectorAll('.progress-bar-segment');
+
+            function updateEraView() {
+                eraCards.forEach((card, index) => card.classList.toggle('active', card.id === `era-${currentEra}`));
+                progressSegments.forEach((segment, index) => segment.classList.toggle('active', index === currentEra));
+            }
+            
+            nextEraBtn.addEventListener('click', () => { if (currentEra < totalEras - 1) { currentEra++; updateEraView(); }});
+            prevEraBtn.addEventListener('click', () => { if (currentEra > 0) { currentEra--; updateEraView(); }});
+            
+            // 'Archive' page navigation
+            const archiveCards = document.querySelectorAll('.archive-card');
+            const prevArchiveBtn = document.getElementById('prev-archive-btn');
+            const nextArchiveBtn = document.getElementById('next-archive-btn');
+            const archiveProgressBar = document.getElementById('archive-progress-bar');
+            const archiveItem0 = document.getElementById('archive-item-0');
+            const backToArchiveListBtn = document.getElementById('back-to-archive-list-btn');
+            let currentArchive = 0;
+            const totalArchives = 2;
+
+            for (let i = 0; i < totalArchives; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-bar-segment h-1 rounded-full flex-1';
+                archiveProgressBar.appendChild(segment);
+            }
+            const archiveProgressSegments = archiveProgressBar.querySelectorAll('.progress-bar-segment');
+            
+            function updateArchiveView(archiveIndex) {
+                currentArchive = archiveIndex;
+                archiveCards.forEach((card, index) => card.classList.toggle('active', card.id === `archive-card-${currentArchive}`));
+                archiveProgressSegments.forEach((segment, index) => segment.classList.toggle('active', index === currentArchive));
+                
+                // Show/hide navigation buttons based on view
+                const isGridView = archiveIndex === 0;
+                prevArchiveBtn.style.display = isGridView ? 'none' : 'block';
+                nextArchiveBtn.style.display = isGridView ? 'none' : 'block';
+            }
+
+            nextArchiveBtn.addEventListener('click', () => { if (currentArchive < totalArchives - 1) { updateArchiveView(currentArchive + 1); }});
+            prevArchiveBtn.addEventListener('click', () => { if (currentArchive > 0) { updateArchiveView(currentArchive - 1); }});
+            
+            if (archiveItem0) {
+                archiveItem0.addEventListener('click', () => {
+                    updateArchiveView(1);
+                });
+            }
+            if (backToArchiveListBtn) {
+                backToArchiveListBtn.addEventListener('click', () => updateArchiveView(0));
+            }
+
+
+            // Like button
+            const likeBtn = document.querySelector('.like-btn');
+            const likeCountEl = document.querySelector('.like-count');
+            if (likeBtn) {
+                likeBtn.addEventListener('click', () => {
+                    likeBtn.classList.toggle('liked');
+                    let currentLikes = parseInt(likeCountEl.textContent, 10);
+                    likeCountEl.textContent = likeBtn.classList.contains('liked') ? currentLikes + 1 : currentLikes - 1;
+                });
+            }
+
+            // Tour Page Card Navigation
+            const tourCards = document.querySelectorAll('.tour-card');
+            const startTourBtn1 = document.getElementById('start-tour-1');
+            const backToTourListBtn = document.getElementById('back-to-tour-list-btn');
+            let currentTour = 0;
+
+            function updateTourView(tourIndex) {
+                currentTour = tourIndex;
+                tourCards.forEach((card, index) => {
+                    card.classList.toggle('active', card.id === `tour-card-${currentTour}`);
+                });
+            }
+
+            if (startTourBtn1) {
+                startTourBtn1.addEventListener('click', () => updateTourView(1));
+            }
+            if (backToTourListBtn) {
+                backToTourListBtn.addEventListener('click', () => updateTourView(0));
+            }
+
+
+            // Initial setup
+            switchPage('home');
+            updateEraView();
+            updateArchiveView(0);
+            updateTourView(0);
+        });
+    </script>
+
+</body>
+</html>
